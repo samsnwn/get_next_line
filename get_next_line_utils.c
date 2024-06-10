@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_next_line_utils.c                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: samcasti <samcasti@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/06/10 18:28:37 by samcasti          #+#    #+#             */
+/*   Updated: 2024/06/10 18:29:51 by samcasti         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "get_next_line.h"
 
 int	is_newline(t_list *list)
@@ -96,27 +108,4 @@ void	copy_str(t_list *list, char *str)
 		list = list->next;
 	}
 	str[k] = '\0';
-}
-
-void	free_list(t_list **list, t_list *new_node, char *buffer)
-{
-	t_list	*tmp;
-
-	if (*list == NULL)
-		return ;
-	while (*list)
-	{
-		tmp = (*list)->next;
-		free((*list)->str);
-		free(*list);
-		*list = tmp;
-	}
-	*list = NULL;
-	if (new_node->str[0])
-		*list = new_node;
-	else
-	{
-		free(buffer);
-		free(new_node);
-	}
 }
