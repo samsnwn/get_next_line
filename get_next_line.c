@@ -6,7 +6,7 @@
 /*   By: samcasti <samcasti@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/10 18:27:48 by samcasti          #+#    #+#             */
-/*   Updated: 2024/06/10 18:30:47 by samcasti         ###   ########.fr       */
+/*   Updated: 2024/06/26 13:24:07 by samcasti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ char	*get_next_line(int fd)
 	create_node(&list, fd);
 	if (list == NULL)
 		return (NULL);
-	line = get_line(list);
+	line = ft_get_line(list);
 	clean_list(&list);
 	return (line);
 }
@@ -62,7 +62,7 @@ void	create_node(t_list **list, int fd)
 	}
 }
 
-char	*get_line(t_list *list)
+char	*ft_get_line(t_list *list)
 {
 	int		length;
 	char	*line;
