@@ -6,37 +6,24 @@
 /*   By: samcasti <samcasti@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/10 18:28:23 by samcasti          #+#    #+#             */
-/*   Updated: 2024/06/26 13:24:18 by samcasti         ###   ########.fr       */
+/*   Updated: 2024/09/24 15:24:08 by samcasti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef GET_NEXT_LINE_H
 # define GET_NEXT_LINE_H
 
-# ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 1
-# endif
-
-# include <fcntl.h>
-# include <stdio.h>
 # include <stdlib.h>
 # include <unistd.h>
 
-typedef struct s_list
-{
-	char			*str;
-	struct s_list	*next;
-}					t_list;
+# ifndef BUFFER_SIZE
+#  define BUFFER_SIZE 1000000
+# endif
 
-char				*get_next_line(int fd);
-int					is_newline(t_list *list);
-t_list				*ft_lstlast(t_list *list);
-int					str_len(t_list *list);
-void				copy_str(t_list *list, char *str);
-void				free_list(t_list **list, t_list *clean_node, char *buf);
-char				*ft_get_line(t_list *list);
-void				clean_list(t_list **list);
-void				ft_lstadd_back(t_list **list, char *buffer);
-void				create_node(t_list **list, int fd);
+char	*get_next_line(int fd);
+char	*ft_strchr(const char *s, int c);
+char	*ft_strjoin(const char *s1, const char *s2);
+char	*ft_strdup(const char *s);
+size_t	ft_strlen(const char *s);
 
 #endif

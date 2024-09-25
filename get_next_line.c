@@ -6,121 +6,101 @@
 /*   By: samcasti <samcasti@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/10 18:27:48 by samcasti          #+#    #+#             */
-/*   Updated: 2024/06/26 13:24:07 by samcasti         ###   ########.fr       */
+/*   Updated: 2024/09/25 17:06:41 by samcasti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-// int main()
-// {
-// 	int fd;
-// 	char *line;
-// 	int lines;
+static char	*read_to_buffer(int fd, char *buffer)
+{
+	char	*temp;
+	int		bytes_read;
 
-// 	lines = 1;
-// 	fd = open("test.txt", O_RDONLY);
-// 	while ((line = get_next_line(fd)))
-// 		printf("%d-> %s\n", lines++, line);
-// 	close(fd);
-// 	return 0;
-// }
+	temp = malloc(sizeof(char) * (BUFFER_SIZE + 1));
+	if (!temp)
+		return (NULL);
+	bytes_read = 1;
+	while (!ft_strchr(buffer, '\n') && bytes_read > 0)
+	{
+		bytes_read = read(fd, temp, BUFFER_SIZE);
+		if (bytes_read == -1)
+		{
+			free(temp);
+			free(buffer);
+			return (NULL);
+		}
+		temp[bytes_read] = '\0';
+		buffer = ft_strjoin(buffer, temp);
+		if (!buffer)
+			return (NULL);
+	}
+	free(temp);
+	return (buffer);
+}
+
+static char	*extract_line(char *buffer)
+{
+	int		i;
+	char	*line;
+
+	i = 0;
+	if (!buffer[i])
+		return (NULL);
+	while (buffer[i] && buffer[i] != '\n')
+		i++;
+	line = malloc(sizeof(char) * (i + 2));
+	if (!line)
+		return (NULL);
+	i = 0;
+	while (buffer[i] && buffer[i] != '\n')
+	{
+		line[i] = buffer[i];
+		i++;
+	}
+	if (buffer[i] == '\n')
+		line[i++] = '\n';
+	line[i] = '\0';
+	return (line);
+}
+
+static char	*update_buffer(char *buffer)
+{
+	int		i;
+	int		j;
+	char	*new_buffer;
+
+	i = 0;
+	while (buffer[i] && buffer[i] != '\n')
+		i++;
+	if (!buffer[i])
+	{
+		free(buffer);
+		return (NULL);
+	}
+	new_buffer = malloc(sizeof(char) * (ft_strlen(buffer) - i + 1));
+	if (!new_buffer)
+		return (NULL);
+	i++;
+	j = 0;
+	while (buffer[i])
+		new_buffer[j++] = buffer[i++];
+	new_buffer[j] = '\0';
+	free(buffer);
+	return (new_buffer);
+}
 
 char	*get_next_line(int fd)
 {
-	static t_list	*list;
-	char			*line;
+	static char	*buffer;
+	char		*line;
 
-	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, &line, 0) < 0)
+	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
-	create_node(&list, fd);
-	if (list == NULL)
+	buffer = read_to_buffer(fd, buffer);
+	if (!buffer)
 		return (NULL);
-	line = ft_get_line(list);
-	clean_list(&list);
+	line = extract_line(buffer);
+	buffer = update_buffer(buffer);
 	return (line);
-}
-
-void	create_node(t_list **list, int fd)
-{
-	int		bytes_read;
-	char	*buffer;
-
-	while (!is_newline(*list))
-	{
-		buffer = malloc(BUFFER_SIZE + 1);
-		if (buffer == NULL)
-			return ;
-		bytes_read = read(fd, buffer, BUFFER_SIZE);
-		if (!bytes_read)
-		{
-			free(buffer);
-			return ;
-		}
-		buffer[bytes_read] = '\0';
-		ft_lstadd_back(list, buffer);
-	}
-}
-
-char	*ft_get_line(t_list *list)
-{
-	int		length;
-	char	*line;
-
-	if (list == NULL)
-		return (NULL);
-	length = str_len(list);
-	line = malloc(length + 1);
-	if (line == NULL)
-		return (NULL);
-	copy_str(list, line);
-	return (line);
-}
-
-void	clean_list(t_list **list)
-{
-	t_list	*last_node;
-	t_list	*new_node;
-	int		i;
-	int		k;
-	char	*buffer;
-
-	buffer = malloc(BUFFER_SIZE + 1);
-	new_node = malloc(sizeof(t_list));
-	if (buffer == NULL || new_node == NULL)
-		return ;
-	last_node = ft_lstlast(*list);
-	i = 0;
-	k = 0;
-	while (last_node->str[i] && last_node->str[i] != '\n')
-		++i;
-	while (last_node->str[i] && last_node->str[++i])
-		buffer[k++] = last_node->str[i];
-	buffer[k] = '\0';
-	new_node->str = buffer;
-	new_node->next = NULL;
-	free_list(list, new_node, buffer);
-}
-
-void	free_list(t_list **list, t_list *new_node, char *buffer)
-{
-	t_list	*tmp;
-
-	if (*list == NULL)
-		return ;
-	while (*list)
-	{
-		tmp = (*list)->next;
-		free((*list)->str);
-		free(*list);
-		*list = tmp;
-	}
-	*list = NULL;
-	if (new_node->str[0])
-		*list = new_node;
-	else
-	{
-		free(buffer);
-		free(new_node);
-	}
 }

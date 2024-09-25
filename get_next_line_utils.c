@@ -6,106 +6,85 @@
 /*   By: samcasti <samcasti@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/10 18:28:37 by samcasti          #+#    #+#             */
-/*   Updated: 2024/06/10 18:29:51 by samcasti         ###   ########.fr       */
+/*   Updated: 2024/09/24 15:23:44 by samcasti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-int	is_newline(t_list *list)
+char	*ft_strchr(const char *s, int c)
 {
 	int	i;
 
-	if (list == NULL)
+	i = 0;
+	if (!s)
 		return (0);
-	while (list)
+	if (c == '\0')
+		return ((char *)&s[ft_strlen(s)]);
+	while (s[i] != '\0')
 	{
-		i = 0;
-		while (list->str[i] && i < BUFFER_SIZE)
-		{
-			if (list->str[i] == '\n')
-				return (1);
-			++i;
-		}
-		list = list->next;
+		if (s[i] == (char) c)
+			return ((char *)&s[i]);
+		i++;
 	}
 	return (0);
 }
 
-void	ft_lstadd_back(t_list **list, char *buffer)
+char	*ft_strjoin(char const *s1, char const *s2)
 {
-	t_list	*new_node;
-	t_list	*last_node;
+	size_t	i;
+	size_t	j;
+	char	*str;
 
-	last_node = ft_lstlast(*list);
-	new_node = malloc(sizeof(t_list));
-	if (new_node == NULL)
-		return ;
-	if (last_node == NULL)
-		*list = new_node;
-	else
-		last_node->next = new_node;
-	new_node->str = buffer;
-	new_node->next = NULL;
-}
-
-t_list	*ft_lstlast(t_list *list)
-{
-	if (!list)
+	if (!s1)
+		s1 = ft_strdup("");
+	if (!s1 || !s2)
 		return (NULL);
-	while (list->next)
-		list = list->next;
-	return (list);
+	str = malloc(sizeof(char) * ((ft_strlen(s1) + ft_strlen(s2)) + 1));
+	if (str == NULL)
+		return (NULL);
+	i = -1;
+	j = 0;
+	if (s1)
+		while (s1[++i] != '\0')
+			str[i] = s1[i];
+	while (s2[j] != '\0')
+	{
+		str[i] = s2[j];
+		i++;
+		j++;
+	}
+	str[ft_strlen(s1) + ft_strlen(s2)] = '\0';
+	free((char *)s1);
+	return (str);
 }
 
-int	str_len(t_list *list)
+size_t	ft_strlen(const char *s)
 {
-	int	i;
-	int	length;
+	size_t	i;
 
-	length = 0;
-	if (list == NULL)
+	i = 0;
+	if (!s)
 		return (0);
-	while (list)
-	{
-		i = 0;
-		while (list->str[i])
-		{
-			if (list->str[i] == '\n')
-			{
-				++length;
-				return (length);
-			}
-			++i;
-			++length;
-		}
-		list = list->next;
-	}
-	return (length);
+	while (s[i] != '\0')
+		i++;
+	return (i);
 }
 
-void	copy_str(t_list *list, char *str)
+char	*ft_strdup(const char *s1)
 {
-	int	i;
-	int	k;
+	char	*str;
+	size_t	i;
 
-	if (list == NULL)
-		return ;
-	k = 0;
-	while (list)
+	str = malloc(sizeof(char) * (ft_strlen(s1) + 1));
+	if (!str)
+		return (NULL);
+	i = 0;
+	while (s1[i])
 	{
-		i = 0;
-		while (list->str[i])
-		{
-			if (list->str[i] == '\n')
-			{
-				str[k++] = '\n';
-				str[k] = '\0';
-				return ;
-			}
-			str[k++] = list->str[i++];
-		}
-		list = list->next;
+		str[i] = s1[i];
+		i++;
 	}
-	str[k] = '\0';
+	str[i] = '\0';
+	return (str);
 }
